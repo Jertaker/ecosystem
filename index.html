@@ -56,7 +56,9 @@ label{font-size:12px;color:var(--dim);display:block;margin:4px 0 4px}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .mini-link{font-size:12px;color:var(--dim);cursor:pointer;text-decoration:underline}
 /* chat dock */
-.chatsec{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;margin-bottom:14px;max-height:60vh}
+.chatdock{position:fixed;right:12px;bottom:82px;z-index:40;width:min(360px,calc(100vw - 24px));background:var(--card);border:1px solid var(--gold);border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.5);display:flex;flex-direction:column;max-height:70vh}
+.chatdock .hd{padding:9px 12px;background:rgba(212,175,55,.1);font-size:13px;font-weight:700;color:var(--gold2);display:flex;justify-content:space-between;cursor:pointer}
+.fab{position:fixed;right:14px;bottom:86px;z-index:35;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#b8932c);color:#14100a;border:none;font-size:22px;cursor:pointer;box-shadow:0 4px 18px rgba(212,175,55,.4)}
 .chatmsgs{overflow-y:auto;padding:10px 12px;flex:1;min-height:120px}
 .cmsg{margin-bottom:8px;font-size:13.5px}
 .cmsg .who{color:var(--gold2);font-size:11px}
@@ -88,6 +90,9 @@ label{font-size:12px;color:var(--dim);display:block;margin:4px 0 4px}
 </header>
 <nav class="desknav" id="desknav" style="padding:10px 16px;gap:8px"></nav>
 <main id="view"></main>
+<button class="fab" id="chatfab" onclick="toggleChat()" aria-label="Live chat">💬</button>
+<div class="chatdock hide" id="chatdock">
+  <div class="hd" onclick="toggleChat()"><span>Live Chat</span><span>✕</span></div>
 <nav class="tabbar" id="tabbar"></nav>
 <script>
 const API="https://base44.app/api/apps/6a9224f8c29c628aa348d1ac/functions/communityApi";
@@ -101,11 +106,11 @@ const fmt=t=>{if(!t)return"";const d=new Date(String(t).replace(" ","T"));return
 async function api(op,data={},tok){try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json",...(tok?{Authorization:"Bearer "+tok}:{})},body:JSON.stringify({op,...data})});const j=await r.json();if(!j.ok&&r.status===401&&tok===token){logout()}return j}catch(e){return{ok:false,error:"Network hiccup. Try again."}}}
 function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),3200)}
 function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.12,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.18);o.start();o.stop(c.currentTime+.2)}catch(e){}}
-function setHeader(){const p=$("profbtn");if(member){p.textContent=member.name.split(" ")[0];$("whoami").textContent=(member.audience||"member")+" · "+(member.points||0)+" pts"}else{p.textContent="Sign in";$("whoami").textContent="Customer hub"}}
+function setHeader(){const p=$("profbtn");if(member){p.textContent=member.name.split(" ")[0];$("whoami").textContent=(member.audience||"member")+" · "+(member.points||0)+" pts"}else{p.textContent="Sign in";$("whoami").textContent="Customer hub"}const fab=$("chatfab");if(fab)fab.style.display=isCust()?"":"none"}
 function logout(){token="";member=null;localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(MEMBER_KEY);setHeader();render()}
 function go(t){tab=t;render();window.scrollTo(0,0)}
 /* ---------- tabs ---------- */
-const TABS=[["home","Home","🏠"],["deals","Deals and Offers","🏷️"],["events","Events","📅"],["resources","Resources","📚"],["other","Other","➕"]];
+const TABS=[["home","Home","🏠"],["deals","Deals and Offers","🏷️"],["events","Events","📅"],["resources","Resources","📚"],["other","Other","➕"],["guide","Guide","🤖"]];
 function drawTabs(){const bar=$("tabbar");bar.innerHTML=TABS.map(([id,l,ic])=>`<div class="tab ${tab===id?"on":""}" onclick="go('${id}')">${ic}<br>${l}</div>`).join("");
  const dn=$("desknav");dn.innerHTML=TABS.map(([id,l])=>`<div class="chip ${tab===id?"on":""}" onclick="go('${id}')">${l}</div>`).join("")+`<div class="chip ${tab==="profile"?"on":""}" onclick="go('profile')">Profile</div>`}
 /* ---------- views ---------- */
@@ -124,7 +129,11 @@ async function render(){drawTabs();const v=$("view");
  }
  else if(tab==="resources"){await renderResources(v)}
  else if(tab==="other"){await renderOther(v)}
- else if(tab==="community"||tab==="chub"||tab==="courses"||tab==="guide"||tab==="board"||tab==="partners"){go("home")}
+ else if(tab==="guide"){v.innerHTML=`<div class="h2">Guide</div>
+ <div class="card"><p class="small">Ask anything. The Guide searches the team's approved library and cites its sources; questions it can't answer get logged for the team.</p>
+ <div class="row"><input id="gq" style="flex:1" placeholder="Ask the Guide…" maxlength="300" onkeydown="if(event.key==='Enter')askGuide()"><button class="btn mini" onclick="askGuide()">Ask</button></div></div>
+ <div id="gout"></div>`}
+ else if(tab==="community"||tab==="chub"||tab==="courses"||tab==="board"||tab==="partners"){go("home")}
  else if(tab==="profile"){renderProfile()}
 }
 function paintHome(j){
@@ -171,21 +180,7 @@ async function renderOther(v){
   `<div class="h2">Success Stories</div>`+
   ((st.posts||[]).map(p=>postHtml2(p,"Success")).join("")||'<div class="card"><span class="small">Be the first — share a result you are proud of.</span></div>')+
   `<div class="card"><div class="row"><button class="btn mini" onclick="scToggle()">Share a result</button></div><div id="scwrap" class="hide" style="margin-top:8px"><label>Title</label><input id="sc_title" maxlength="200"><label>Your result</label><textarea id="sc_body" maxlength="5000"></textarea><button class="btn mini" onclick="submitSuccess()">Post</button></div></div>`+
-  `<div class="h2">Guide</div>
- <div class="card"><p class="small">Ask anything. The Guide searches the team's approved library and cites its sources; questions it can't answer get logged for the team.</p>
- <div class="row"><input id="gq" style="flex:1" placeholder="Ask the Guide…" maxlength="300" onkeydown="if(event.key==='Enter')askGuide()"><button class="btn mini" onclick="askGuide()">Ask</button></div></div>
- <div id="gout"></div>
- <div class="h2">Live Chat</div>
- <p class="small" style="margin:0 2px 8px">Talk to the team and other customers right here.</p>
- <div class="chatsec">
-  <div class="chatmsgs" id="chatmsgs"></div>
-  <div class="chatinput" id="chatform">
-   <input id="chattext" placeholder="Say hi…" maxlength="500" onkeydown="if(event.key==='Enter')sendChat()">
-   <button class="btn mini" onclick="sendChat()">→</button>
-  </div>
- </div>
- <div class="h2">Account</div><div class="card"><div class="row"><button class="btn mini sec" onclick="go('profile')">My profile</button></div></div>`;
- pollChat(true);
+  `<div class="h2">Account</div><div class="card"><div class="row"><button class="btn mini sec" onclick="go('profile')">My profile</button></div></div>`;
 }
 function scToggle(){$("scwrap").classList.toggle("hide")}
 async function submitSuccess(){const t=$("sc_title").value.trim(),b=$("sc_body").value.trim();if(!t||!b)return toast("Title and story, please");const j=await api("createPost",{channel:"success",title:t,body:b},token);if(j.ok){toast("Shared! Thank you.");render()}else toast(j.error)}
@@ -220,11 +215,10 @@ async function resolve(id){const j=await api("markResolved",{postId:id},token);i
 async function submitPost(){const t=$("ptitle").value.trim(),b=$("pbody").value.trim();if(!t||!b)return toast("Title and body, please");const j=await api("createPost",{channel,title:t,body:b},token);if(j.ok){toast("Posted!");render()}else toast(j.error)}
 function needLogin(){toast("Sign in first (Profile)");go("profile")}
 /* ---------- chat ---------- */
-async function pollChat(first){const box=$("chatmsgs");if(!box)return;const j=await api("chat",{},token);if(!j.ok){box.innerHTML='<span class="small" style="padding:10px">'+esc(j.error||"Chat unavailable")+'</span>';return}
- const ms=j.messages||[];lastChatId=ms.length?ms[ms.length-1].id:null;
- box.innerHTML=ms.length?ms.map(m=>`<div class="cmsg"><span class="who">${esc(m.authorName)}</span> · <span style="color:var(--dim);font-size:10.5px">${fmt(m.createdAt)}</span><br>${esc(m.body)}</div>`).join(""):'<span class="small" style="padding:10px">No messages yet — say hi.</span>';
- box.scrollTop=box.scrollHeight;}
-setInterval(()=>{if(tab==="other"&&isCust())pollChat(false)},8000);
+async function pollChat(first){const j=await api("chat",{},token);if(!j.ok)return;const ms=j.messages||[];if(!first&&ms.length&&ms[ms.length-1].id!==lastChatId){beep();unread++;drawTabs();if(!chatOpen)toast("New message in live chat")}
+ lastChatId=ms.length?ms[ms.length-1].id:null;$("chatmsgs").innerHTML=ms.map(m=>`<div class="cmsg"><span class="who">${esc(m.authorName)}</span> · <span style="color:var(--dim);font-size:10.5px">${fmt(m.createdAt)}</span><br>${esc(m.body)}</div>`).join("");$("chatmsgs").scrollTop=1e6}
+function toggleChat(force){chatOpen=force===true?true:!chatOpen;if(chatOpen){unread=0;drawTabs()}$("chatdock").classList.toggle("hide",!chatOpen);if(chatOpen){pollChat(true);$("chatmsgs").scrollTop=1e6;if(!member){$("chatform").innerHTML='<span class="small" style="padding:6px">Sign in (Profile) to chat.</span>'}else{$("chatform").innerHTML='<input id="chattext" placeholder="Say hi…" maxlength="500" onkeydown="if(event.key===\'Enter\')sendChat()"><button class="btn mini" onclick="sendChat()">→</button>'}}}
+setInterval(()=>{if(chatOpen&&isCust())pollChat(false)},8000);
 async function sendChat(){const i=$("chattext");if(!i)return;const v=i.value.trim();if(!v)return;if(!member)return needLogin();const j=await api("sendChat",{body:v},token);if(j.ok){i.value="";pollChat(true)}else toast(j.error)}
 /* ---------- guide ---------- */
 async function askGuide(){const q=$("gq").value.trim();if(!q)return;const out=$("gout");out.innerHTML='<div class="card"><span class="small">Searching approved sources…</span></div>';const j=await api("guide",{q});
