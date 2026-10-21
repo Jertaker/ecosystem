@@ -220,7 +220,7 @@ async function resolve(id){const j=await api("markResolved",{postId:id},token);i
 async function submitPost(){const t=$("ptitle").value.trim(),b=$("pbody").value.trim();if(!t||!b)return toast("Title and body, please");const j=await api("createPost",{channel,title:t,body:b},token);if(j.ok){toast("Posted!");render()}else toast(j.error)}
 function needLogin(){toast("Sign in first (Profile)");go("profile")}
 /* ---------- chat ---------- */
-async function pollChat(first){const box=$("chatmsgs");if(!box)return;const j=await api("chat");if(!j.ok){box.innerHTML='<span class="small" style="padding:10px">'+esc(j.error||"Chat unavailable")+'</span>';return}
+async function pollChat(first){const box=$("chatmsgs");if(!box)return;const j=await api("chat",{},token);if(!j.ok){box.innerHTML='<span class="small" style="padding:10px">'+esc(j.error||"Chat unavailable")+'</span>';return}
  const ms=j.messages||[];lastChatId=ms.length?ms[ms.length-1].id:null;
  box.innerHTML=ms.length?ms.map(m=>`<div class="cmsg"><span class="who">${esc(m.authorName)}</span> · <span style="color:var(--dim);font-size:10.5px">${fmt(m.createdAt)}</span><br>${esc(m.body)}</div>`).join(""):'<span class="small" style="padding:10px">No messages yet — say hi.</span>';
  box.scrollTop=box.scrollHeight;}
