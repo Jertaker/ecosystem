@@ -151,7 +151,7 @@ function paintHome(j){
    <b style="font-size:17px">Welcome, Jertaker International customers</b>
    <div class="small" style="margin-top:4px">Updates, deals and events, all in one place.</div>
  </div>
- ${j.pinned?`<div class="card"><div class="pill">Pinned</div><div class="t" style="font-weight:700;font-size:16px;margin:4px 0">${esc(j.pinned.title)}</div><div class="small" style="color:var(--txt);white-space:pre-wrap">${esc(j.pinned.body)}</div><div class="meta" style="font-size:11.5px;color:var(--dim);margin-top:6px">${esc(j.pinned.authorName)} · ${fmt(j.pinned.createdAt)}</div></div>`:""}
+ ${j.pinned?`<div class="card"><div class="pill">Pinned</div><div class="t" style="font-weight:700;font-size:16px;margin:4px 0">${esc(j.pinned.title)}</div><div class="small" style="color:var(--txt);white-space:pre-wrap">${esc(j.pinned.body)}</div></div>`:""}
  <div class="h2">Upcoming</div>
  ${(j.upcoming||[]).map(e=>evCard(e)).join("")||'<div class="card"><span class="small">No events yet.</span></div>'}
  <div class="h2">Latest activity</div>
