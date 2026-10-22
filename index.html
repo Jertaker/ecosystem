@@ -283,6 +283,8 @@ function landByRole(){
 }
 /* ---------- boot ---------- */
 setHeader();render();
+// keep the signed-in member fresh: points and goal progress move server-side
+if(token){api("me",{},token).then(j=>{if(j.ok){member=j.member;localStorage.setItem(MEMBER_KEY,JSON.stringify(member));setHeader();if(tab==="profile")render()}})}
 </script>
 </body>
 </html>
