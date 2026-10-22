@@ -128,7 +128,7 @@ async function render(){drawTabs();const v=$("view");
   if(j&&j.stats){try{localStorage.setItem("vh_home",JSON.stringify(j))}catch(e){};paintHome(j)}
  }
  else if(tab==="deals"){await renderGated(v,"deals","Deals and Offers","Offers from the team, just for customers.","No deals right now. When the team posts an offer, it shows up here.")}
- else if(tab==="events"){v.innerHTML='<div class="card"><span class="small">Loading…</span></div>';const j=await api("events");const now=new Date().toISOString();
+ else if(tab==="events"){if(!isCust()){v.innerHTML=gateCard("Events");return} v.innerHTML='<div class="card"><span class="small">Loading…</span></div>';const j=await api("events");const now=new Date().toISOString();
   const up=(j.events||[]).filter(e=>e.startsAt>now),past=(j.events||[]).filter(e=>e.startsAt<=now).slice(-3).reverse();
   v.innerHTML=`<div class="h2">Upcoming</div>${up.map(e=>evCard(e)).join("")||'<div class="card"><span class="small">No events yet.</span></div>'}`+
   (past.length?`<div class="h2">Recent</div>${past.map(e=>`<div class="card"><b>${esc(e.title)}</b><div class="small">${fmt(e.startsAt)}</div></div>`).join("")}`:"");
@@ -139,7 +139,9 @@ async function render(){drawTabs();const v=$("view");
  <div class="card"><p class="small">Ask anything. The Guide searches the team's approved library and cites its sources; questions it can't answer get logged for the team.</p>
  <div class="row"><input id="gq" style="flex:1" placeholder="Ask the Guide…" maxlength="300" onkeydown="if(event.key==='Enter')askGuide()"><button class="btn mini" onclick="askGuide()">Ask</button></div></div>
  <div id="gout"></div>`}
- else if(tab==="community"||tab==="chub"||tab==="courses"||tab==="board"||tab==="partners"){go("home")}
+ else if(tab==="board"){await renderBoard()}
+ else if(tab==="partners"){await renderPartners()}
+ else if(tab==="community"||tab==="chub"||tab==="courses"){go("home")}
  else if(tab==="profile"){renderProfile()}
 }
 function paintHome(j){
@@ -159,7 +161,7 @@ function paintHome(j){
 `;
 }
 function isCust(){return member&&(member.audience==="customer"||member.audience==="team"||member.role==="admin"||member.role==="owner"||member.role==="moderator")}
-function gateCard(label){return `<div class="card" style="text-align:center;padding:24px 16px"><div class="pill" style="margin-bottom:8px;display:inline-block">${esc(label)}</div><b style="font-size:17px">For customers</b><div class="small" style="margin-top:6px">Sign in with the email your invite went to to see this section.</div>${member?"":'<div class="row" style="margin-top:12px;justify-content:center"><button class="btn mini" onclick="go(\'profile\')">Sign in</button></div>'}</div>`}
+function gateCard(label){return `<div class="card" style="text-align:center;padding:24px 16px"><div class="pill" style="margin-bottom:8px;display:inline-block">${esc(label)}</div><b style="font-size:17px">For customers</b><div class="small" style="margin-top:6px">${member?"This section is for Jertaker International customers. Customer access is set up by the team from the office.":"Sign in with the email your invite went to to see this section."}</div>${member?"":'<div class="row" style="margin-top:12px;justify-content:center"><button class="btn mini" onclick="go(\'profile\')">Sign in</button></div>'}</div>`}
 async function renderGated(v,channelName,title,sub,emptyMsg){
  if(!isCust()){v.innerHTML=gateCard(title);return}
  v.innerHTML='<div class="card"><span class="small">Loading…</span></div>';
@@ -190,6 +192,12 @@ async function renderOther(v){
 }
 function scToggle(){$("scwrap").classList.toggle("hide")}
 async function submitSuccess(){const t=$("sc_title").value.trim(),b=$("sc_body").value.trim();if(!t||!b)return toast("Title and story, please");const j=await api("createPost",{channel:"success",title:t,body:b},token);if(j.ok){toast("Shared! Thank you.");render()}else toast(j.error)}
+async function renderBoard(){const v=$("view");if(!member){v.innerHTML='<div class="card"><span class="small">Sign in to see the leaderboard.</span></div>';return}
+ v.innerHTML='<div class="card"><span class="small">Loading…</span></div>';const j=await api("leaderboard",{},token);
+ v.innerHTML=`<div class="h2">Leaderboard</div>`+((j.board||[]).length?`<div class="card">${j.board.map((x,i)=>`<div class="lbrow"><span class="rank">${i+1}</span><div><b>${esc(x.name)}</b><div class="small">${esc(x.audience)}</div></div><span class="pts">${x.points} pts</span></div>`).join("")}</div>`:'<div class="card"><span class="small">Nobody on the board yet — opt in from your Profile.</span></div>')+`<div class="card"><button class="btn mini sec" onclick="go('profile')">Back to profile</button></div>`}
+async function renderPartners(){const v=$("view");if(!member){v.innerHTML='<div class="card"><span class="small">Sign in to see the partners list.</span></div>';return}
+ v.innerHTML='<div class="card"><span class="small">Loading…</span></div>';const j=await api("partners",{},token);
+ v.innerHTML=`<div class="h2">Accountability Partners</div><div class="card"><span class="small">Members who opted in to pair up and push each other on their goals. Opt in from your Profile.</span></div>`+((j.partners||[]).length?(j.partners).map(p=>`<div class="card"><b>${esc(p.name)}</b> <span class="small">${esc(p.audience)}</span>${p.focusArea?`<div class="small">Focus: ${esc(p.focusArea)}</div>`:""}${p.partnerGoal?`<div class="small">Wants a partner to push on: ${esc(p.partnerGoal)}</div>`:""}</div>`).join(""):'<div class="card"><span class="small">No one has opted in yet.</span></div>')+`<div class="card"><button class="btn mini sec" onclick="go('profile')">Back to profile</button></div>`}
 function evCard(e){const d=new Date(e.startsAt);const gcal=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.title)}&dates=${fmtG(d)}/${fmtG(new Date(d.getTime()+(e.durationMin||60)*60000))}&details=${encodeURIComponent(e.description||"")}`;
  return `<div class="card"><div class="row" style="align-items:flex-start"><div class="evdate"><b>${d.getDate()}</b><span>${d.toLocaleDateString("en-US",{month:"short"})}</span></div>
  <div style="flex:1"><b>${esc(e.title)}</b><div class="small">${esc(e.description||"")}</div><div class="small" style="margin-top:3px">${fmt(e.startsAt)}${e.host?" · Host: "+esc(e.host):""} · ${e.rsvps||0} going</div></div></div>
@@ -245,21 +253,21 @@ async function renderProfile(){const v=$("view");
  <button class="btn mini" onclick="saveProfile()">Save bio</button>
  <div class="row" style="margin-top:10px"><label style="margin:0"><input type="checkbox" id="pr_lb" ${m.optInLeaderboard?"checked":""} style="width:auto;margin:0 6px 0 0">Show me on the leaderboard</label></div>
  <div class="row"><label style="margin:0"><input type="checkbox" id="pr_pt" ${m.optInPartners?"checked":""} style="width:auto;margin:0 6px 0 0">List me for accountability partners</label></div>
+ <div class="small" style="margin-top:4px">Accountability partners: members who volunteer to pair up and push each other on their goals. Check this and your name, focus area and partner goal show up on the Partners list (Members area below) — only signed-in members can see it, and nobody appears unless they opt in.</div>
  <button class="btn mini" style="margin-top:8px" onclick="saveProfile()">Save choices</button></div>
  <div class="card"><div class="h2">Members area</div>
  <div class="row"><div class="chip" onclick="go('board')">🏆 Leaderboard</div><div class="chip" onclick="go('partners')">🤝 Partners</div></div>
  <div class="small" style="margin-top:6px">Members only — never shown to the public home page.</div></div>
  <div class="card"><div class="h2">My Goal</div>
- <label>What are you going after?</label><input id="pr_goal" maxlength="300" value="${esc(m.goalText||"")}" placeholder="e.g. Close two EC City deals this month">
- <div class="goalbar"><i style="width:${prog}%"></i></div><span class="small">${prog}% there — move the slider as you make progress</span>
- <input type="range" id="pr_prog" min="0" max="100" value="${prog}" style="padding:0;margin:8px 0" oninput="$('prog_lbl').textContent=this.value+'%'"><span class="small" id="prog_lbl">${prog}%</span>
+ <label>What are you going after?</label><input id="pr_goal" maxlength="300" value="${esc(m.goalText||"")}" placeholder="e.g. Share two results I'm proud of this month">
+ <div class="goalbar"><i style="width:${prog}%"></i></div><span class="small">${prog}% — progress moves on its own as you finish things: share a result, post, comment or RSVP. Set a new goal and it starts over.</span>
  <button class="btn mini" onclick="saveProfile()">Save goal</button></div>
  <div class="card"><div class="h2">Partner matching</div>
- <label>Focus area</label><input id="pr_focus" maxlength="100" value="${esc(m.focusArea||"")}" placeholder="e.g. Beliefs, content, EC City">
+ <label>Focus area</label><input id="pr_focus" maxlength="100" value="${esc(m.focusArea||"")}" placeholder="e.g. Products, support, growing my business">
  <label>Partner goal</label><input id="pr_pgoal" maxlength="300" value="${esc(m.partnerGoal||"")}" placeholder="What an accountability partner should push you on">
  <button class="btn mini" onclick="saveProfile()">Save</button></div>
  <button class="btn sec" onclick="logout()">Log out</button>`}
-async function saveProfile(){const patch={bio:$("pr_bio").value,goalText:$("pr_goal").value,goalProgress:parseInt($("pr_prog").value),focusArea:$("pr_focus").value,partnerGoal:$("pr_pgoal").value,optInLeaderboard:$("pr_lb").checked,optInPartners:$("pr_pt").checked};
+async function saveProfile(){const patch={bio:$("pr_bio").value,goalText:$("pr_goal").value,focusArea:$("pr_focus").value,partnerGoal:$("pr_pgoal").value,optInLeaderboard:$("pr_lb").checked,optInPartners:$("pr_pt").checked};
  const j=await api("setProfile",patch,token);if(j.ok){member=j.member;localStorage.setItem(MEMBER_KEY,JSON.stringify(member));setHeader();toast("Saved")}else toast(j.error)}
 async function doSignup(){const name=$("sf_name").value.trim(),email=$("sf_email").value.trim(),audience="member";
  if(!name||!email)return toast("Name and email, please");const j=await api("signup",{name,email,audience});
