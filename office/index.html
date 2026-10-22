@@ -48,6 +48,9 @@ function render(){const v=$("view");
   <button class="btn" style="width:100%" onclick="adLogin()">Unlock</button>
   <p class="small" style="margin-top:10px">Team only. Wrong attempts lock this page progressively.</p></div>`;return}
  v.innerHTML=`<div class="card"><div class="h2">Members &amp; access</div><span class="small" id="om_list">Loading…</span></div>
+ <div class="card"><div class="h2">Customer view</div>
+  <span class="small">Walk the hub exactly as a customer sees it. Opens the hub in a new tab, signed in as a test customer account. Log out there any time; it never touches your office PIN.</span>
+  <button class="btn" style="margin-top:10px" onclick="viewCustomer()">Open customer view</button></div>
  <div class="card"><div class="h2">Post a deal or offer</div>
   <label>Title</label><input id="ad_title" maxlength="200">
   <label>Details</label><textarea id="ad_body" maxlength="10000"></textarea>
@@ -74,6 +77,7 @@ function render(){const v=$("view");
   <label>Category</label><input id="ak_cat" placeholder="e.g. Community Hub">
   <label>Body</label><textarea id="ak_body"></textarea>
   <label>Source URL (https, optional)</label><input id="ak_url">
+  <p class="small" style="margin:-4px 0 8px">Only sources meant for customers and members — internal papers (EC City, Mission Control, CRM, VANTRA ops) never go in the Guide library.</p>
   <button class="btn" onclick="adDo('addKnowledge',{title:$('ak_title').value,category:$('ak_cat').value,body:$('ak_body').value,sourceUrl:$('ak_url').value},'Added to approved library')">Add</button></div>
  <div class="card"><div class="h2">Stats</div><span class="small" id="ad_stats">Loading…</span></div>
  <button class="btn sec" onclick="adminTok='';localStorage.removeItem('vh_admin');render()">Log out</button>`;
@@ -82,6 +86,7 @@ function render(){const v=$("view");
  api("adminCourses",{},adminTok).then(j=>{if(!j.ok||!$("oc_list"))return;const cs=j.courses||[];$("oc_list").innerHTML=cs.length?cs.map(c=>`<div class="lesson" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>${esc(c.title)}</b><div class="small">${c.audience==="customer"?"Customers":c.audience==="team"?"Team":"UNASSIGNED — visible to no one"}</div></div><select style="width:auto" onchange="adDo('setCourseAudience',{id:'${c.id}',audience:this.value},'Assignment saved')"><option value="" ${!c.audience?"selected":""}>Nobody</option><option value="customer" ${c.audience==="customer"?"selected":""}>Customers</option><option value="team" ${c.audience==="team"?"selected":""}>Team</option></select></div>`).join(""):'<span class="small">No courses yet. Publish one below — it stays invisible until you assign it.</span>'})
  api("adminStats",{},adminTok).then(j=>{if(!j.ok){adminTok="";localStorage.removeItem("vh_admin");toast(j.error);render();return}$("ad_stats").textContent=Object.entries(j.stats).map(([k,v])=>k+": "+v).join(" · ")})}
 async function adLogin(){const pin=$("ad_pin").value.trim();if(!pin)return;const j=await api("adminLogin",{pin,deviceLabel:navigator.userAgent.slice(0,40)});if(j.ok){adminTok=j.token;localStorage.setItem("vh_admin",adminTok);toast("Admin ready");render()}else{$("ad_pin").value="";toast(j.error)}}
+async function viewCustomer(){const j=await api("adminViewCustomer",{},adminTok);if(!j.ok){toast(j.error);return}localStorage.setItem("vh_token",j.token);localStorage.setItem("vh_member",JSON.stringify(j.member));window.open("../index.html","_blank")}
 async function postDeal(){const t=$("ad_title").value.trim(),b=$("ad_body").value.trim();if(!t||!b)return toast("Title and details, please");await adDo("createDeal",{title:t,body:b},"Deal posted — customers only");render()}
 async function adDo(op,data,msg){const j=await api(op,data,adminTok);if(j.ok){toast(msg)}else{toast(j.error);if(j.error&&j.error.includes("Admin session")){adminTok="";localStorage.removeItem("vh_admin");render()}}}
 render();
