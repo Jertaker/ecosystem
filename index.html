@@ -118,6 +118,10 @@ body{background:radial-gradient(560px 360px at 12% -6%,rgba(197,160,89,.15),tran
 .card.hero .hero-in{background:linear-gradient(180deg,rgba(6,8,14,.05) 0%,rgba(6,8,14,.18) 50%,rgba(6,8,14,.62) 100%);padding:38px 16px 28px;min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
 .card.hero .crown-img{width:150px;height:auto;display:block;margin:0 auto 10px}
 .card.pinned{background-color:#0b0e14;background-size:cover;background-position:center;border-color:rgba(212,175,55,.5)}
+
+.card.empty{background-color:#0b0e14;background-size:cover;background-position:right center;border-color:rgba(212,175,55,.4);text-align:left;padding:26px 16px;min-height:130px}
+.card.empty .em-ic{margin:0 0 6px}
+.card.empty .em-ic svg{margin:0}
 </style>
 </head>
 <body>
@@ -208,7 +212,7 @@ function paintHome(j){
  </div>
  ${j.pinned?`<div class="card pinned" style="background-image:url('pin_bg.jpg?v=1')"><div class="row" style="align-items:center;gap:12px"><div class="pin-ic">${IC.mega}</div><div style="flex:1;min-width:0"><span class="badge">Pinned Announcement</span><div class="t" style="font-weight:700;font-size:16px;margin:6px 0 0">${esc(j.pinned.title)}</div></div></div><div class="small" style="color:var(--txt);white-space:pre-wrap;margin-top:10px">${esc(j.pinned.body)}</div></div>`:""}
  <div class="h2row"><div class="h2">Upcoming Events</div><span class="viewall" onclick="go('events')">View All &#8594;</span></div>
- ${(j.upcoming||[]).map(e=>evCard(e)).join("")||`<div class="card empty"><div class="em-ic">${IC.cal}</div><div class="t" style="font-weight:700;margin:6px 0">No events yet.</div><div class="small">Check back soon for upcoming events, trainings, and special announcements.</div></div>`}
+ ${(j.upcoming||[]).map(e=>evCard(e)).join("")||`<div class="card empty" style="background-image:url('ev_bg.jpg?v=1')"><div class="em-ic">${IC.cal}</div><div class="t" style="font-weight:700;margin:6px 0">No events yet.</div><div class="small">Check back soon for upcoming events, trainings, and special announcements.</div></div>`}
  <div class="h2">Latest activity</div>
  ${(j.recent||[]).map(p=>`<div class="post"><span class="pill ${p.channel==="wins"?"win":p.channel==="qa"?"qa":""}">${p.channel}</span><div class="t">${esc(p.title)}</div><div class="meta" style="font-size:11.5px;color:var(--dim)">${esc(p.authorName)} · ${fmt(p.createdAt)}</div></div>`).join("")||'<div class="card"><span class="small">Nothing yet — be the first to post a win.</span></div>'}
 `;
