@@ -150,6 +150,12 @@ body{background:radial-gradient(560px 360px at 12% -6%,rgba(197,160,89,.15),tran
 .card.pinned .pin-ic{width:78px;height:78px;flex:0 0 78px;border-radius:20px;position:relative;border:1.5px solid #FAD991;background:linear-gradient(150deg,rgba(26,15,46,.85) 0%,rgba(8,8,14,.94) 60%,rgba(20,12,34,.85) 100%);box-shadow:0 0 22px rgba(250,217,145,.45),0 0 46px rgba(233,191,85,.22),inset 0 0 18px rgba(250,217,145,.14),inset 0 1px 0 rgba(255,255,255,.18)}
 .card.pinned .pin-ic::after{content:"";position:absolute;inset:-7px;border-radius:26px;border:1px solid rgba(250,217,145,.22);pointer-events:none}
 .card.pinned .pin-ic svg{width:48px;height:48px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.65)) drop-shadow(0 0 6px rgba(250,217,145,.35))}
+
+/* v10: megaphone smaller + vertically centered per Boss */
+.card.pinned .pin-ic{width:54px;height:54px;flex:0 0 54px;border-radius:14px;align-self:center}
+.card.pinned .pin-ic::after{inset:-5px;border-radius:19px}
+.card.pinned .pin-ic svg{width:32px;height:32px}
+.card.pinned .pin-ic{box-shadow:0 0 16px rgba(250,217,145,.4),0 0 32px rgba(233,191,85,.18),inset 0 0 12px rgba(250,217,145,.13),inset 0 1px 0 rgba(255,255,255,.16)}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></head>
 <body>
