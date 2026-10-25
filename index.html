@@ -134,6 +134,13 @@ body{background:radial-gradient(560px 360px at 12% -6%,rgba(197,160,89,.15),tran
 
 .card.hero .hero-in{background:linear-gradient(180deg,rgba(6,8,14,.10) 0%,rgba(6,8,14,.42) 38%,rgba(6,8,14,.72) 100%) !important}
 .card.hero .brand-sub{text-shadow:0 1px 10px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.9);font-weight:600}
+
+/* v7: pinned badge + megaphone container per Boss annotation */
+.card.pinned .badge{display:inline-flex;align-items:center;background:rgba(10,11,18,.62);color:#ecd9a0;border:1px solid rgba(212,175,55,.55);border-radius:999px;padding:5px 14px;font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.card.pinned .pin-ic{width:46px;height:46px;border-radius:12px;border:1.5px solid rgba(212,175,55,.75);display:flex;align-items:center;justify-content:center;flex:0 0 46px;background:rgba(10,11,18,.55);box-shadow:0 0 14px rgba(212,175,55,.22), inset 0 0 10px rgba(212,175,55,.08)}
+.card.pinned .pin-ic svg{width:24px;height:24px}
+.card.pinned .t{text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.card.pinned .small{text-shadow:0 1px 6px rgba(0,0,0,.8)}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></head>
 <body>
@@ -224,7 +231,7 @@ function paintHome(j){
      <button class="btn ghost" onclick="go('deals')">Explore Your Benefits &#8594;</button>
    </div>
  </div>
- ${j.pinned?`<div class="card pinned" style="background-image:url('pin_bg.jpg?v=1')"><div class="row" style="align-items:center;gap:12px"><div class="pin-ic">${IC.mega}</div><div style="flex:1;min-width:0"><span class="badge">Pinned Announcement</span><div class="t" style="font-weight:700;font-size:16px;margin:6px 0 0">${esc(j.pinned.title)}</div></div></div><div class="small" style="color:var(--txt);white-space:pre-wrap;margin-top:10px">${esc(j.pinned.body)}</div></div>`:""}
+ ${j.pinned?`<div class="card pinned" style="background-image:url('pin_bg.jpg?v=1')"><div class="row" style="align-items:center;gap:12px"><div class="pin-ic">${IC.mega}</div><div style="flex:1;min-width:0"><span class="badge"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-1px;margin-right:5px"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1 1.76H6.5a1 1 0 0 0-1 1V15h13v-1.48a1 1 0 0 0-1-1H16a2 2 0 0 1-1-1.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z"/></svg>Pinned Announcement</span><div class="t" style="font-weight:700;font-size:16px;margin:6px 0 0">${esc(j.pinned.title)}</div></div></div><div class="small" style="color:var(--txt);white-space:pre-wrap;margin-top:10px">${esc(j.pinned.body)}</div></div>`:""}
  <div class="h2row"><div class="h2">Upcoming Events</div><span class="viewall" onclick="go('events')">View All &#8594;</span></div>
  ${(j.upcoming||[]).map(e=>evCard(e)).join("")||`<div class="card empty" style="background-image:url('ev_bg.jpg?v=1')"><div class="em-ic">${IC.cal}</div><div class="t" style="font-weight:700;margin:6px 0">No events yet.</div><div class="small">Check back soon for upcoming events, trainings, and special announcements.</div></div>`}
  <div class="h2">Latest activity</div>
