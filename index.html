@@ -203,7 +203,7 @@ function paintHome(j){
  </div>
  ${j.pinned?`<div class="card pinned"><div class="row" style="align-items:center;gap:12px"><div class="pin-ic">${IC.mega}</div><div style="flex:1;min-width:0"><span class="badge">Pinned Announcement</span><div class="t" style="font-weight:700;font-size:16px;margin:6px 0 0">${esc(j.pinned.title)}</div></div></div><div class="small" style="color:var(--txt);white-space:pre-wrap;margin-top:10px">${esc(j.pinned.body)}</div></div>`:""}
  <div class="h2row"><div class="h2">Upcoming Events</div><span class="viewall" onclick="go('events')">View All &#8594;</span></div>
- ${(j.upcoming||[]).map(e=>evCard(e)).join("")||'<div class="card empty"><div class="em-ic">${IC.cal}</div><div class="t" style="font-weight:700;margin:6px 0">No events yet.</div><div class="small">Check back soon for upcoming events, trainings, and special announcements.</div></div>'}
+ ${(j.upcoming||[]).map(e=>evCard(e)).join("")||`<div class="card empty"><div class="em-ic">${IC.cal}</div><div class="t" style="font-weight:700;margin:6px 0">No events yet.</div><div class="small">Check back soon for upcoming events, trainings, and special announcements.</div></div>`}
  <div class="h2">Latest activity</div>
  ${(j.recent||[]).map(p=>`<div class="post"><span class="pill ${p.channel==="wins"?"win":p.channel==="qa"?"qa":""}">${p.channel}</span><div class="t">${esc(p.title)}</div><div class="meta" style="font-size:11.5px;color:var(--dim)">${esc(p.authorName)} · ${fmt(p.createdAt)}</div></div>`).join("")||'<div class="card"><span class="small">Nothing yet — be the first to post a win.</span></div>'}
 `;
