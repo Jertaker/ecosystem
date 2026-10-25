@@ -124,8 +124,15 @@ body{background:radial-gradient(560px 360px at 12% -6%,rgba(197,160,89,.15),tran
 .card.empty .em-ic svg{margin:0}
 
 .card.empty{background-image:linear-gradient(90deg,rgba(6,8,14,.80) 0%,rgba(6,8,14,.40) 55%,rgba(6,8,14,.05) 100%),url('ev_bg.jpg?v=1') !important;background-size:cover !important;background-position:right center !important}
+
+/* v6: hero typography matched to mockup */
+.card.hero .brand-main{font-family:'Montserrat',system-ui,sans-serif;font-weight:700;font-size:46px;letter-spacing:3px;line-height:1.05;margin-top:2px;background:linear-gradient(180deg,#ffffff 0%,#e6e8ee 40%,#9aa0ac 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+.card.hero .brand-intl{font-family:'Montserrat',system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:9px;margin:4px 0 0 9px;color:#d9ac4f;background:linear-gradient(180deg,#f2cd7a,#b98a35);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none}
+.card.hero .brand-sub{font-family:'Montserrat',system-ui,sans-serif;font-weight:500;font-size:10.5px;letter-spacing:3px;color:#f1f1f1;margin-top:14px}
+.card.hero .hero-tag{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-weight:500;font-size:19px;line-height:1.35;letter-spacing:.2px;color:#f4f1ea;max-width:360px;margin:16px auto 20px;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.card.hero .btn.ghost{background:rgba(8,10,16,.55);border:1.5px solid #c9a24a;color:#f6e6b4;font-weight:600;padding:12px 34px;border-radius:14px;box-shadow:0 0 16px rgba(212,175,55,.25)}
 </style>
-</head>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></head>
 <body>
 <header>
   <img class="emblem" src="jg_emblem.png" alt="JG emblem">
@@ -207,7 +214,8 @@ function paintHome(j){
  <div class="card hero" style="background-image:url('hero_office.jpg?v=1')">
    <div class="hero-in">
      <img src="crown_cutout.png?v=3" alt="" class="crown-img" style="width:150px;height:auto">
-     <div class="brand">JERTAKER INTERNATIONAL</div>
+     <div class="brand-main">JERTAKER</div>
+     <div class="brand-intl">INTERNATIONAL</div>
      <div class="brand-sub">MAKING LIVES BETTER ONE AT A TIME!</div>
      <div class="hero-tag">${esc(TAGLINE)}</div>
      <button class="btn ghost" onclick="go('deals')">Explore Your Benefits &#8594;</button>
