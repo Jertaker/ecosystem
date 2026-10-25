@@ -168,6 +168,11 @@ html{background:#05060a}
 body{background:transparent !important}
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:#05060a url('page_bg.jpg?v=1') center top/cover no-repeat}
 body::after{content:"";display:none}
+
+/* v14: desktop keeps the portrait art centered instead of stretched; phone unchanged */
+@media(min-width:700px){body::before{background:#05060a url('page_bg.jpg?v=1') center top/auto 100% no-repeat}}
+.app-header,header.top,.top{background:rgba(8,9,14,.82) !important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.tabbar{background:rgba(8,9,14,.86) !important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></head>
 <body>
