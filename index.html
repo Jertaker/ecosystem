@@ -112,7 +112,13 @@ body{background:radial-gradient(560px 360px at 12% -6%,rgba(197,160,89,.15),tran
 .tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;margin-bottom:4px}
 .tab .tl{font-size:9.5px;letter-spacing:.2px;display:block}
 .tab.on{color:var(--gold2)}
-.tab.on::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:22px;height:2px;border-radius:2px;background:var(--gold)}</style>
+.tab.on::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:22px;height:2px;border-radius:2px;background:var(--gold)}
+/* v5: real backgrounds */
+.card.hero{background-color:#0b0e14;background-size:cover;background-position:center;padding:0;border-color:rgba(212,175,55,.55);min-height:430px}
+.card.hero .hero-in{background:linear-gradient(180deg,rgba(6,8,14,.05) 0%,rgba(6,8,14,.18) 50%,rgba(6,8,14,.62) 100%);padding:38px 16px 28px;min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.card.hero .crown-img{width:150px;height:auto;display:block;margin:0 auto 10px}
+.card.pinned{background-color:#0b0e14;background-size:cover;background-position:center;border-color:rgba(212,175,55,.5)}
+</style>
 </head>
 <body>
 <header>
@@ -191,17 +197,16 @@ function paintHome(j){
  const v=$("view");if(!j||!j.stats){v.innerHTML='<div class="card"><span class="small">Loading…</span></div>';return}
  const TAGLINE="We are bringing customer service back to this world, not only that, but we are taking it to new heights never been reached before!!";
  v.innerHTML=`
- <div class="card hero">
-   <img src="hero_bg2.jpg?v=1" alt="" class="hero-bg">
+ <div class="card hero" style="background-image:url('hero_office.jpg?v=1')">
    <div class="hero-in">
-     <img src="crown_cutout.png?v=2" alt="" class="crown-img">
+     <img src="crown_cutout.png?v=3" alt="" class="crown-img" style="width:150px;height:auto">
      <div class="brand">JERTAKER INTERNATIONAL</div>
      <div class="brand-sub">MAKING LIVES BETTER ONE AT A TIME!</div>
      <div class="hero-tag">${esc(TAGLINE)}</div>
      <button class="btn ghost" onclick="go('deals')">Explore Your Benefits &#8594;</button>
    </div>
  </div>
- ${j.pinned?`<div class="card pinned"><div class="row" style="align-items:center;gap:12px"><div class="pin-ic">${IC.mega}</div><div style="flex:1;min-width:0"><span class="badge">Pinned Announcement</span><div class="t" style="font-weight:700;font-size:16px;margin:6px 0 0">${esc(j.pinned.title)}</div></div></div><div class="small" style="color:var(--txt);white-space:pre-wrap;margin-top:10px">${esc(j.pinned.body)}</div></div>`:""}
+ ${j.pinned?`<div class="card pinned" style="background-image:url('pin_bg.jpg?v=1')"><div class="row" style="align-items:center;gap:12px"><div class="pin-ic">${IC.mega}</div><div style="flex:1;min-width:0"><span class="badge">Pinned Announcement</span><div class="t" style="font-weight:700;font-size:16px;margin:6px 0 0">${esc(j.pinned.title)}</div></div></div><div class="small" style="color:var(--txt);white-space:pre-wrap;margin-top:10px">${esc(j.pinned.body)}</div></div>`:""}
  <div class="h2row"><div class="h2">Upcoming Events</div><span class="viewall" onclick="go('events')">View All &#8594;</span></div>
  ${(j.upcoming||[]).map(e=>evCard(e)).join("")||`<div class="card empty"><div class="em-ic">${IC.cal}</div><div class="t" style="font-weight:700;margin:6px 0">No events yet.</div><div class="small">Check back soon for upcoming events, trainings, and special announcements.</div></div>`}
  <div class="h2">Latest activity</div>
