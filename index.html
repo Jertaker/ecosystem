@@ -122,6 +122,8 @@ body{background:radial-gradient(560px 360px at 12% -6%,rgba(197,160,89,.15),tran
 .card.empty{background-color:#0b0e14;background-size:cover;background-position:right center;border-color:rgba(212,175,55,.4);text-align:left;padding:26px 16px;min-height:130px}
 .card.empty .em-ic{margin:0 0 6px}
 .card.empty .em-ic svg{margin:0}
+
+.card.empty{background-image:linear-gradient(90deg,rgba(6,8,14,.80) 0%,rgba(6,8,14,.40) 55%,rgba(6,8,14,.05) 100%),url('ev_bg.jpg?v=1') !important;background-size:cover !important;background-position:right center !important}
 </style>
 </head>
 <body>
@@ -169,6 +171,7 @@ IC.bot='<svg viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect x="4" y="8" width="1
 IC.crown='<svg class="crown" viewBox="0 0 120 92" fill="none"><defs><linearGradient id="gldf" x1="0" y1="0" x2="0.85" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".35" stop-color="#f2c94c"/><stop offset=".7" stop-color="#d4af37"/><stop offset="1" stop-color="#8b5a2b"/></linearGradient><linearGradient id="glds" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".35"/><stop offset=".5" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity=".25"/></linearGradient><filter id="cglow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#cglow)"><path fill="url(#gldf)" d="M12 62 L30 20 L45 44 L60 10 L75 44 L90 20 L108 62 Z"/><rect fill="url(#gldf)" x="14" y="66" width="92" height="9" rx="3"/><path fill="url(#glds)" d="M12 62 L30 20 L45 44 L60 10 L75 44 L90 20 L108 62 Z"/><rect fill="url(#glds)" x="14" y="66" width="92" height="9" rx="3"/></g></svg>';
 IC.mega='<svg viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>';
 IC.chat='<svg viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>';
+IC.deals=IC.tag;IC.events=IC.cal;IC.resources=IC.book;IC.other=IC.dots;IC.guide=IC.bot;
 const TABS=[["home","Home"],["deals","Deals & Offers"],["events","Events"],["resources","Resources"],["other","More"],["guide","Guide"]];
 function drawTabs(){const bar=$("tabbar");bar.innerHTML=TABS.map(([id,l])=>`<div class="tab ${tab===id?"on":""}" onclick="go('${id}')">${IC[id]}<span class="tl">${l}</span></div>`).join("");
  const dn=$("desknav");dn.innerHTML=TABS.map(([id,l])=>`<div class="chip ${tab===id?"on":""}" onclick="go('${id}')">${l}</div>`).join("")+`<div class="chip ${tab==="profile"?"on":""}" onclick="go('profile')">Profile</div>`}
