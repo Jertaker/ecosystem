@@ -163,10 +163,11 @@ body{background:radial-gradient(560px 360px at 12% -6%,rgba(197,160,89,.15),tran
 .pin-col{flex:1;min-width:0}
 .card.pinned .pin-ic{width:54px;height:54px;flex:0 0 54px;border-radius:14px}
 
-/* v12: blurred night-city page background like the mockup */
-body::before{content:"";position:fixed;inset:-40px;z-index:-2;background:url('hero_bg.jpg?v=2') center/cover no-repeat;filter:blur(7px) brightness(.55) saturate(1.05)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(8,9,16,.42),rgba(8,9,16,.66))}
-@media(min-width:700px){body::before{filter:blur(9px) brightness(.5)}}
+/* v13: Boss page background (gold dust / purple marble frame) */
+html{background:#05060a}
+body{background:transparent !important}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:#05060a url('page_bg.jpg?v=1') center top/cover no-repeat}
+body::after{content:"";display:none}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></head>
 <body>
